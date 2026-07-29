@@ -303,12 +303,15 @@ const MenuList = () => {
         {/* Featured Menu Slider */}
         {featuredMenu && activeCategory === 'Semua' && !searchTerm && (
           <div className="px-6 mb-8 relative">
-            <div onClick={() => openProductModal(featuredMenu)} className="relative rounded-[2rem] overflow-hidden shadow-lg group cursor-pointer" style={{height: 'clamp(200px, 40vw, 320px)'}}>
+            <div onClick={() => openProductModal(featuredMenu)} className="relative rounded-[2rem] overflow-hidden shadow-lg group cursor-pointer bg-[#1A1F16]" style={{height: 'clamp(200px, 40vw, 320px)'}}>
               {readyMenus.map((menu, idx) => (
                 <div key={menu.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === currentSlideIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                  <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-bottom" alt="Featured" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
-                  <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-between">
+                  {/* Blurred Background */}
+                  <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110" alt="" />
+                  {/* Main Image */}
+                  <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="relative w-full h-full object-contain object-center z-10 drop-shadow-xl" alt="Featured" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10"></div>
+                  <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-between z-20">
                      <div>
                         <div className="flex items-center gap-1 text-accent font-bold text-xs mb-2 tracking-wider">
                            <Flame className="w-3 h-3" /> PILIHAN HARI INI
@@ -370,8 +373,9 @@ const MenuList = () => {
                 return (
                   <div key={menu.id} onClick={() => !isOut && openProductModal(menu)} className={`bg-white rounded-[1.5rem] p-2.5 md:p-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 flex flex-col group transition-all relative ${isOut ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] cursor-pointer'}`}>
                      {/* Image */}
-                     <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden mb-3">
-                        <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className={`w-full h-full object-cover object-center transition-transform duration-500 ${isOut ? 'grayscale' : 'group-hover:scale-110'}`} alt={menu.name} />
+                     <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden mb-3 bg-[#f5f5f5]">
+                        <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className={`absolute inset-0 w-full h-full object-cover blur-md opacity-30 scale-110 ${isOut ? 'grayscale' : ''}`} alt="" />
+                        <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className={`relative w-full h-full object-contain object-center z-10 transition-transform duration-500 drop-shadow-sm ${isOut ? 'grayscale' : 'group-hover:scale-110'}`} alt={menu.name} />
                        
                        {!isOut ? (
                          <div className={`absolute top-2 left-2 text-white text-[9px] font-bold px-2 py-0.5 rounded-md ${index % 2 === 0 ? 'bg-utang' : 'bg-accent'}`}>
@@ -425,9 +429,10 @@ const MenuList = () => {
              </button>
 
              {/* Image — compact height, rounded top corners */}
-             <div className="w-full h-40 sm:h-44 relative bg-gray-100 rounded-t-3xl overflow-hidden shrink-0">
-               <img src={selectedMenu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-center" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+             <div className="w-full h-48 sm:h-56 relative bg-[#1A1F16] rounded-t-3xl overflow-hidden shrink-0">
+               <img src={selectedMenu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 scale-110" alt="" />
+               <img src={selectedMenu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="relative w-full h-full object-contain object-center z-10 drop-shadow-2xl" alt={selectedMenu.name} />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10 pointer-events-none" />
              </div>
 
              {/* Content — scrollable only if needed */}
