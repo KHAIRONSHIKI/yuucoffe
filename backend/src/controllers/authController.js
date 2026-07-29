@@ -37,6 +37,20 @@ exports.guestLogin = async (req, res) => {
       return res.status(400).json({ message: 'Nama dan Nomor Meja wajib diisi' });
     }
 
+    // Cek apakah meja sedang digunakan (ada pesanan aktif)
+    const activeOrderAtTable = await prisma.order.findFirst({
+      where: {
+        customer: { tableNum: tableNum },
+        status: { notIn: ['COMPLETED', 'CANCELLED'] }
+      }
+    });
+
+    if (activeOrderAtTable) {
+      return res.status(409).json({
+        message: `Mohon maaf, meja ${tableNum} sedang digunakan. Silahkan pilih meja yang lain.`
+      });
+    }
+
     const customer = await prisma.customer.create({
       data: { name, tableNum }
     });
@@ -52,3 +66,4 @@ exports.guestLogin = async (req, res) => {
     res.status(500).json({ message: 'Gagal masuk sebagai guest', error: error.message });
   }
 };
+
