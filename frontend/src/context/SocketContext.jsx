@@ -12,7 +12,7 @@ export const SocketProvider = ({ children }) => {
     // Only connect if user is logged in
     if (user) {
       const socketUrl = import.meta.env.VITE_SOCKET_URL 
-        || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000');
+        || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'https://yuucoffe-production.up.railway.app');
       const newSocket = io(socketUrl);
       setSocket(newSocket);
 
