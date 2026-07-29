@@ -302,22 +302,22 @@ const MenuList = () => {
         {/* Featured Menu Slider */}
         {featuredMenu && activeCategory === 'Semua' && !searchTerm && (
           <div className="px-6 mb-8 relative">
-            <div onClick={() => openProductModal(featuredMenu)} className="relative rounded-[2rem] overflow-hidden h-56 md:h-72 lg:h-80 shadow-lg group cursor-pointer">
+            <div onClick={() => openProductModal(featuredMenu)} className="relative rounded-[2rem] overflow-hidden shadow-lg group cursor-pointer" style={{height: 'clamp(200px, 40vw, 320px)'}}>
               {readyMenus.map((menu, idx) => (
                 <div key={menu.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === currentSlideIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                  <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover" alt="Featured" />
+                  <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-center" alt="Featured" />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
-                  <div className="absolute inset-0 p-6 flex flex-col justify-between">
+                  <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-between">
                      <div>
                         <div className="flex items-center gap-1 text-accent font-bold text-xs mb-2 tracking-wider">
                            <Flame className="w-3 h-3" /> PILIHAN HARI INI
                         </div>
-                        <h3 className="text-white text-2xl font-black mb-1 drop-shadow-md">{menu.name}</h3>
+                        <h3 className="text-white text-xl md:text-2xl font-black mb-1 drop-shadow-md">{menu.name}</h3>
                         <p className="text-white/90 text-xs line-clamp-2 w-3/4 drop-shadow-md">{menu.description}</p>
                      </div>
                      <div className="flex items-end justify-between">
-                        <div className="flex items-center gap-3">
-                           <span className="text-white font-bold text-lg drop-shadow-md">{formatRupiah(menu.price)}</span>
+                        <div className="flex items-center gap-2 md:gap-3">
+                           <span className="text-white font-bold text-base md:text-lg drop-shadow-md">{formatRupiah(menu.price)}</span>
                            <span className="bg-accent text-white text-[10px] px-2.5 py-1 rounded-md font-bold">TERSEDIA</span>
                         </div>
                         
@@ -325,8 +325,8 @@ const MenuList = () => {
                            {getTotalMenuQuantity(menu.id) > 0 && (
                              <span className="absolute -top-2 -right-2 bg-utang text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full z-10 shadow-sm border-2 border-white">{getTotalMenuQuantity(menu.id)}</span>
                            )}
-                           <button className="w-12 h-12 bg-piutang/90 backdrop-blur-md rounded-full flex items-center justify-center text-white shadow-xl hover:bg-piutang transition-transform active:scale-95">
-                              <Plus className="w-6 h-6" />
+                           <button className="w-10 h-10 md:w-12 md:h-12 bg-piutang/90 backdrop-blur-md rounded-full flex items-center justify-center text-white shadow-xl hover:bg-piutang transition-transform active:scale-95">
+                              <Plus className="w-5 h-5 md:w-6 md:h-6" />
                            </button>
                         </div>
                      </div>
@@ -354,22 +354,15 @@ const MenuList = () => {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
              {filteredMenus.map((menu, index) => (
-               <div key={menu.id} onClick={() => openProductModal(menu)} className="bg-white rounded-[1.5rem] p-2.5 md:p-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 flex flex-col group hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all cursor-pointer">
+               <div key={menu.id} onClick={() => openProductModal(menu)} className="bg-white rounded-[1.5rem] p-2.5 md:p-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 flex flex-col group hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all cursor-pointer relative">
+                  {/* Image */}
                   <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden mb-3">
-                     <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={menu.name} />
+                     <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110" alt={menu.name} />
                     <div className={`absolute top-2 left-2 text-white text-[9px] font-bold px-2 py-0.5 rounded-md ${index % 2 === 0 ? 'bg-utang' : 'bg-accent'}`}>
                       {index % 2 === 0 ? 'TERLARIS' : 'FAVORIT'}
                     </div>
-                    
-                    <div className="absolute bottom-2 right-2 relative">
-                       {getTotalMenuQuantity(menu.id) > 0 && (
-                         <span className="absolute -top-2 -right-2 bg-utang text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full z-10 border border-white shadow-sm">{getTotalMenuQuantity(menu.id)}</span>
-                       )}
-                       <button className="w-8 h-8 bg-piutang/90 backdrop-blur-sm rounded-full flex items-center justify-center text-white shadow-md active:scale-95 hover:bg-piutang relative z-0">
-                          <Plus className="w-4 h-4" />
-                       </button>
-                    </div>
                  </div>
+                 {/* Info */}
                  <div className="px-1 pb-1 flex-1 flex flex-col">
                     <h3 className="font-bold text-sm leading-tight mb-1 text-[#2B231D]">{menu.name}</h3>
                     <p className="text-[10px] text-text-main/60 line-clamp-2 mb-3 flex-1">{menu.description}</p>
@@ -380,7 +373,19 @@ const MenuList = () => {
                           <span className="flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" /> 5m</span>
                        </div>
                     </div>
-                   </div>
+                 </div>
+                 {/* Add Button - always visible, bottom-right of card */}
+                 <div
+                   className="absolute bottom-3 right-3"
+                   onClick={(e) => { e.stopPropagation(); openProductModal(menu); }}
+                 >
+                   {getTotalMenuQuantity(menu.id) > 0 && (
+                     <span className="absolute -top-2 -right-2 bg-utang text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full z-10 border-2 border-white shadow-sm">{getTotalMenuQuantity(menu.id)}</span>
+                   )}
+                   <button className="w-8 h-8 bg-piutang rounded-full flex items-center justify-center text-white shadow-md active:scale-95 hover:bg-piutang/80 transition-all">
+                     <Plus className="w-4 h-4" />
+                   </button>
+                 </div>
                </div>
              ))}
           </div>
