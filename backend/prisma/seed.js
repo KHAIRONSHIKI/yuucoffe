@@ -5,10 +5,10 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Buat Admin
-  const adminPassword = await bcrypt.hash('admin123', 10);
+  const adminPassword = await bcrypt.hash('yuucoffeadmin05', 10);
   await prisma.user.upsert({
     where: { username: 'admin' },
-    update: {},
+    update: { password: adminPassword },
     create: {
       username: 'admin',
       password: adminPassword,
@@ -17,10 +17,10 @@ async function main() {
   });
 
   // Buat Kasir
-  const kasirPassword = await bcrypt.hash('kasir123', 10);
+  const kasirPassword = await bcrypt.hash('yucoffekasir05', 10);
   await prisma.user.upsert({
     where: { username: 'kasir' },
-    update: {},
+    update: { password: kasirPassword },
     create: {
       username: 'kasir',
       password: kasirPassword,
