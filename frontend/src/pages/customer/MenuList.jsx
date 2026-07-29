@@ -347,47 +347,68 @@ const MenuList = () => {
         )}
 
         {/* Grid */}
-        <div className="px-6">
-          <div className="flex justify-between items-end mb-4">
-             <h2 className="text-lg font-bold text-[#2B231D]">Semua Menu</h2>
-             <span className="text-xs font-medium text-text-main/50">{filteredMenus.length} item</span>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-             {filteredMenus.map((menu, index) => (
-               <div key={menu.id} onClick={() => openProductModal(menu)} className="bg-white rounded-[1.5rem] p-2.5 md:p-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 flex flex-col group hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] transition-all cursor-pointer relative">
-                  {/* Image */}
-                  <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden mb-3">
-                     <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110" alt={menu.name} />
-                    <div className={`absolute top-2 left-2 text-white text-[9px] font-bold px-2 py-0.5 rounded-md ${index % 2 === 0 ? 'bg-utang' : 'bg-accent'}`}>
-                      {index % 2 === 0 ? 'TERLARIS' : 'FAVORIT'}
+         <div className="px-6">
+           <div className="flex justify-between items-end mb-4">
+              <h2 className="text-lg font-bold text-[#2B231D]">Semua Menu</h2>
+              <span className="text-xs font-medium text-text-main/50">{filteredMenus.length} item</span>
+           </div>
+           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {filteredMenus.map((menu, index) => {
+                const opts = getParsedOptions(menu);
+                let isOut = false;
+                if (!menu.isAvailable) {
+                  isOut = true;
+                } else if (opts.length > 0) {
+                  // If all options have 0 stock
+                  isOut = opts.every(o => (parseInt(o.stock) || 0) <= 0);
+                } else {
+                  // Menu without options, check menu.stock
+                  isOut = (menu.stock ?? 999) <= 0;
+                }
+
+                return (
+                  <div key={menu.id} onClick={() => !isOut && openProductModal(menu)} className={`bg-white rounded-[1.5rem] p-2.5 md:p-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 flex flex-col group transition-all relative ${isOut ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] cursor-pointer'}`}>
+                     {/* Image */}
+                     <div className="relative h-32 md:h-40 rounded-2xl overflow-hidden mb-3">
+                        <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className={`w-full h-full object-cover object-center transition-transform duration-500 ${isOut ? 'grayscale' : 'group-hover:scale-110'}`} alt={menu.name} />
+                       
+                       {!isOut ? (
+                         <div className={`absolute top-2 left-2 text-white text-[9px] font-bold px-2 py-0.5 rounded-md ${index % 2 === 0 ? 'bg-utang' : 'bg-accent'}`}>
+                           {index % 2 === 0 ? 'TERLARIS' : 'FAVORIT'}
+                         </div>
+                       ) : (
+                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                           <span className="bg-utang text-white text-[11px] font-black tracking-widest px-3 py-1 rounded-lg shadow-lg">HABIS</span>
+                         </div>
+                       )}
                     </div>
-                 </div>
-                 {/* Info */}
-                 <div className="px-1 pb-1 flex-1 flex flex-col">
-                    <h3 className="font-bold text-sm leading-tight mb-1 text-[#2B231D]">{menu.name}</h3>
-                    <p className="text-[10px] text-text-main/60 line-clamp-2 mb-3 flex-1">{menu.description}</p>
-                    <div className="flex items-center justify-between mt-auto">
-                       <span className="font-bold text-sm text-text-main">{formatRupiah(menu.price)}</span>
-                       <div className="flex items-center gap-1.5 text-[9px] text-text-main/50 font-medium">
-                          <span className="flex items-center gap-0.5"><Star className="w-2.5 h-2.5 text-accent fill-accent" /> 4.8</span>
-                          <span className="flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" /> 5m</span>
+                    {/* Info */}
+                    <div className="px-1 pb-1 flex-1 flex flex-col">
+                       <h3 className="font-bold text-sm leading-tight mb-1 text-[#2B231D]">{menu.name}</h3>
+                       <p className="text-[10px] text-text-main/60 line-clamp-2 mb-3 flex-1">{menu.description}</p>
+                       <div className="flex items-center justify-between mt-auto">
+                          <span className={`font-bold text-sm ${isOut ? 'text-gray-400' : 'text-text-main'}`}>{formatRupiah(menu.price)}</span>
+                          <div className="flex items-center gap-1.5 text-[9px] text-text-main/50 font-medium">
+                             <span className="flex items-center gap-0.5"><Star className={`w-2.5 h-2.5 ${isOut ? 'text-gray-300 fill-gray-300' : 'text-accent fill-accent'}`} /> 4.8</span>
+                             <span className="flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" /> 5m</span>
+                          </div>
                        </div>
                     </div>
-                 </div>
-                 {/* Add Button - always visible, bottom-right of card */}
-                 <div
-                   className="absolute bottom-3 right-3"
-                   onClick={(e) => { e.stopPropagation(); openProductModal(menu); }}
-                 >
-                   {getTotalMenuQuantity(menu.id) > 0 && (
-                     <span className="absolute -top-2 -right-2 bg-utang text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full z-10 border-2 border-white shadow-sm">{getTotalMenuQuantity(menu.id)}</span>
-                   )}
-                   <button className="w-8 h-8 bg-piutang rounded-full flex items-center justify-center text-white shadow-md active:scale-95 hover:bg-piutang/80 transition-all">
-                     <Plus className="w-4 h-4" />
-                   </button>
-                 </div>
-               </div>
-             ))}
+                    {/* Add Button - always visible, bottom-right of card */}
+                    <div
+                      className="absolute bottom-3 right-3"
+                      onClick={(e) => { e.stopPropagation(); if (!isOut) openProductModal(menu); }}
+                    >
+                      {getTotalMenuQuantity(menu.id) > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-utang text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full z-10 border-2 border-white shadow-sm">{getTotalMenuQuantity(menu.id)}</span>
+                      )}
+                      <button className={`w-8 h-8 rounded-full flex items-center justify-center text-white shadow-md transition-all ${isOut ? 'bg-gray-300 cursor-not-allowed' : 'bg-piutang active:scale-95 hover:bg-piutang/80'}`}>
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>
