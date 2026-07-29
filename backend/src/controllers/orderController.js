@@ -18,6 +18,7 @@ exports.createOrder = async (req, res) => {
       let price = menu.price;
       
       if (item.optionName && menu.options) {
+        // Menu dengan opsi/varian — kurangi stok dari dalam options JSON
         let opts = [];
         if (Array.isArray(menu.options)) {
           opts = menu.options;
@@ -32,8 +33,13 @@ exports.createOrder = async (req, res) => {
           const selectedOpt = opts[selectedOptIdx];
           price += parseInt(selectedOpt.priceModifier) || 0;
 
-          // Deduct stock
+          // Validasi stok opsi
           const currentStock = parseInt(selectedOpt.stock) || 0;
+          if (currentStock < item.quantity) {
+            return res.status(400).json({ message: `Stok opsi "${selectedOpt.name}" untuk menu "${menu.name}" tidak mencukupi (tersisa ${currentStock}).` });
+          }
+
+          // Deduct stock opsi
           const newStock = Math.max(0, currentStock - item.quantity);
           opts[selectedOptIdx] = { ...selectedOpt, stock: newStock };
 
@@ -43,6 +49,17 @@ exports.createOrder = async (req, res) => {
             data: { options: opts }
           });
         }
+      } else {
+        // Menu tanpa opsi — kurangi stok dari field `stock`
+        const currentStock = menu.stock ?? 999;
+        if (currentStock < item.quantity) {
+          return res.status(400).json({ message: `Stok menu "${menu.name}" tidak mencukupi (tersisa ${currentStock}).` });
+        }
+
+        await prisma.menu.update({
+          where: { id: menu.id },
+          data: { stock: Math.max(0, currentStock - item.quantity) }
+        });
       }
 
       totalAmount += price * item.quantity;
@@ -54,6 +71,7 @@ exports.createOrder = async (req, res) => {
         note: item.note || ''
       });
     }
+
 
     const newOrder = await prisma.order.create({
       data: {
