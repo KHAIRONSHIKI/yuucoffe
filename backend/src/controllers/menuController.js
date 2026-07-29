@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { getIo } = require('../services/socketService');
 
 exports.getAllMenu = async (req, res) => {
   try {
@@ -24,6 +25,8 @@ exports.createMenu = async (req, res) => {
         options: options || []
       }
     });
+    // Notify all customer pages to refresh menu list
+    getIo().emit('menu_updated');
     res.status(201).json(newMenu);
   } catch (error) {
     console.error("CREATE MENU ERROR:", error);
@@ -48,6 +51,8 @@ exports.updateMenu = async (req, res) => {
         options: options !== undefined ? options : undefined
       }
     });
+    // Notify all customer pages to refresh menu (availability, stock, etc)
+    getIo().emit('menu_updated');
     res.json(updatedMenu);
   } catch (error) {
     console.error("UPDATE MENU ERROR:", error);
@@ -66,6 +71,8 @@ exports.deleteMenu = async (req, res) => {
     });
     
     await prisma.menu.delete({ where: { id: menuId } });
+    // Notify all customer pages to refresh menu list
+    getIo().emit('menu_updated');
     res.json({ message: 'Menu berhasil dihapus' });
   } catch (error) {
     console.error("DELETE MENU ERROR:", error);
