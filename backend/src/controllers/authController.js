@@ -37,27 +37,28 @@ exports.guestLogin = async (req, res) => {
       return res.status(400).json({ message: 'Nama dan Nomor Meja wajib diisi' });
     }
 
-    // Cek apakah meja sedang digunakan (ada pesanan aktif)
-    // Gunakan perbandingan numerik agar "09" == "9"
+    // Cek meja — SAMA PERSIS dengan logika di dashboard Kasir
+    // Kasir pakai: orders.find(o => parseInt(o.customer?.tableNum) === tableNumInt && o.isTableCleared === false)
     const tableInt = parseInt(tableNum);
-    const allCustomers = await prisma.customer.findMany();
-    const customersAtTable = allCustomers.filter(c => parseInt(c.tableNum) === tableInt);
-    const customerIds = customersAtTable.map(c => c.id);
-
-    if (customerIds.length > 0) {
-      // Sama seperti logika di dashboard Kasir: Meja dianggap terisi selama isTableCleared === false
-      const activeOrderAtTable = await prisma.order.findFirst({
-        where: {
-          customerId: { in: customerIds },
-          isTableCleared: false
+    const activeOrderAtTable = await prisma.order.findFirst({
+      where: {
+        isTableCleared: false,
+        customer: {
+          tableNum: {
+            in: [
+              String(tableInt),                     // "1"
+              String(tableInt).padStart(2, '0'),    // "01"
+              String(tableInt).padStart(3, '0'),    // "001"
+            ]
+          }
         }
-      });
-
-      if (activeOrderAtTable) {
-        return res.status(409).json({
-          message: `Mohon maaf, meja ${tableNum} sedang digunakan. Silahkan pilih meja yang lain.`
-        });
       }
+    });
+
+    if (activeOrderAtTable) {
+      return res.status(409).json({
+        message: `Mohon maaf, meja ${String(tableInt).padStart(2, '0')} sedang digunakan. Silahkan pilih meja yang lain.`
+      });
     }
 
     const customer = await prisma.customer.create({
