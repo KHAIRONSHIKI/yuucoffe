@@ -395,27 +395,27 @@ const MenuList = () => {
       {/* Product Detail Modal */}
       {selectedMenu && (
          <div className="fixed inset-0 bg-black/70 z-[60] flex items-end sm:items-center justify-center animate-in fade-in duration-200" onClick={closeProductModal}>
-           <div className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom-8 duration-300 relative overflow-hidden" onClick={e => e.stopPropagation()}>
+           <div className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom-8 duration-300 relative" onClick={e => e.stopPropagation()}>
              
              {/* Close Button */}
              <button onClick={closeProductModal} className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm shadow-md p-1.5 rounded-full z-20 transition-colors border border-gray-100 hover:bg-gray-100">
                <X className="w-4 h-4 text-gray-700" />
              </button>
 
-             {/* Image — compact height */}
-             <div className="w-full h-40 sm:h-44 relative bg-gray-100 shrink-0">
+             {/* Image — compact height, rounded top corners */}
+             <div className="w-full h-40 sm:h-44 relative bg-gray-100 rounded-t-3xl overflow-hidden shrink-0">
                <img src={selectedMenu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-center" />
                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
              </div>
 
-             {/* Content */}
-             <div className="px-5 pt-4 pb-5 flex flex-col gap-3">
+             {/* Content — scrollable only if needed */}
+             <div className="px-5 pt-4 pb-6 flex flex-col gap-3 max-h-[60vh] overflow-y-auto">
 
                {/* Name + Price */}
                <div className="flex items-start justify-between gap-2">
                  <div>
                    <h2 className="text-2xl font-black text-[#2B231D] leading-tight">{selectedMenu.name}</h2>
-                   <p className="text-xs text-text-main/55 mt-0.5 line-clamp-1">{selectedMenu.description}</p>
+                   <p className="text-xs text-text-main/55 mt-0.5">{selectedMenu.description}</p>
                  </div>
                  <div className="text-lg font-black text-piutang shrink-0 mt-0.5">{formatRupiah(selectedMenu.price)}</div>
                </div>
@@ -515,6 +515,7 @@ const MenuList = () => {
            </div>
          </div>
       )}
+
 
 
       {/* Cart / Confirmation Modal */}
