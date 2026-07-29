@@ -231,7 +231,8 @@ const MenuList = () => {
       setCart([]);
     } catch (error) {
       showLoading(false);
-      showAlert('Gagal membuat pesanan. Coba lagi.');
+      const errorMsg = error.response?.data?.message || 'Gagal membuat pesanan. Coba lagi.';
+      showAlert(errorMsg, 'Kesalahan', 'warning');
     }
   };
 
