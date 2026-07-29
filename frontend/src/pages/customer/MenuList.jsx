@@ -306,8 +306,8 @@ const MenuList = () => {
             <div onClick={() => openProductModal(featuredMenu)} className="relative w-full rounded-[2rem] overflow-hidden shadow-lg group cursor-pointer bg-[#f5f5f5] shrink-0" style={{height: 'clamp(200px, 40vw, 320px)'}}>
               {readyMenus.map((menu, idx) => (
                 <div key={menu.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === currentSlideIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                  {/* Main Image strictly with object-cover as requested */}
-                  <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-center" alt="Featured" />
+                  {/* Main Image */}
+                  <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-contain object-center" alt="Featured" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10 pointer-events-none"></div>
                   <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-between z-20">
                      <div>
@@ -357,11 +357,8 @@ const MenuList = () => {
            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {filteredMenus.map((menu, index) => {
                 const opts = getParsedOptions(menu);
-                let isOut = false;
-                if (!menu.isAvailable) {
-                  isOut = true;
                 const stock = menu.stock ?? 999;
-                const isOut = stock <= 0;
+                const isOut = !menu.isAvailable || stock <= 0;
                 
                 return (
                   <div key={menu.id} onClick={() => !isOut && openProductModal(menu)} className={`bg-white rounded-[1.5rem] p-2.5 md:p-3 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 flex flex-col h-full group transition-all relative ${isOut ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] cursor-pointer'}`}>
