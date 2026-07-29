@@ -45,10 +45,11 @@ exports.guestLogin = async (req, res) => {
     const customerIds = customersAtTable.map(c => c.id);
 
     if (customerIds.length > 0) {
+      // Sama seperti logika di dashboard Kasir: Meja dianggap terisi selama isTableCleared === false
       const activeOrderAtTable = await prisma.order.findFirst({
         where: {
           customerId: { in: customerIds },
-          status: { notIn: ['COMPLETED', 'CANCELLED'] }
+          isTableCleared: false
         }
       });
 
