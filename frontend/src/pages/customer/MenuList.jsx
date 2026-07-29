@@ -305,7 +305,7 @@ const MenuList = () => {
             <div onClick={() => openProductModal(featuredMenu)} className="relative rounded-[2rem] overflow-hidden shadow-lg group cursor-pointer" style={{height: 'clamp(200px, 40vw, 320px)'}}>
               {readyMenus.map((menu, idx) => (
                 <div key={menu.id} className={`absolute inset-0 transition-opacity duration-1000 ${idx === currentSlideIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                  <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-center" alt="Featured" />
+                  <img src={menu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-bottom" alt="Featured" />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent"></div>
                   <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-between">
                      <div>
