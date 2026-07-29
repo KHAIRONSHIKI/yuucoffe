@@ -17,7 +17,7 @@ app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
 
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'YU_COFFE API is running' });
+  res.status(200).json({ status: 'ok', message: 'YUUCOFFE API is running' });
 });
 
 app.use(errorHandler);
