@@ -394,116 +394,128 @@ const MenuList = () => {
 
       {/* Product Detail Modal */}
       {selectedMenu && (
-         <div className="fixed inset-0 bg-black/60 z-[60] flex items-end sm:items-center justify-center animate-in fade-in duration-200">
-           <div className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl max-h-[90vh] overflow-y-auto pb-6 shadow-2xl animate-in slide-in-from-bottom-8 duration-300 relative">
-             <button onClick={closeProductModal} className="absolute top-4 right-4 bg-white hover:bg-gray-100 shadow-md p-2 rounded-full z-10 transition-colors border border-gray-200 group">
-               <X className="w-5 h-5 text-gray-800 group-hover:scale-110 transition-transform" />
+         <div className="fixed inset-0 bg-black/70 z-[60] flex items-end sm:items-center justify-center animate-in fade-in duration-200" onClick={closeProductModal}>
+           <div className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl animate-in slide-in-from-bottom-8 duration-300 relative overflow-hidden" onClick={e => e.stopPropagation()}>
+             
+             {/* Close Button */}
+             <button onClick={closeProductModal} className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm shadow-md p-1.5 rounded-full z-20 transition-colors border border-gray-100 hover:bg-gray-100">
+               <X className="w-4 h-4 text-gray-700" />
              </button>
-             
-             <div className="w-full h-48 sm:h-56 relative bg-gray-100">
-                <img src={selectedMenu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover" />
-             </div>
-             
-             <div className="px-6 pt-5 pb-2 border-b border-gray-100">
-                <h2 className="text-2xl font-black text-[#2B231D] mb-1">{selectedMenu.name}</h2>
-                <p className="text-sm text-text-main/60 mb-3">{selectedMenu.description}</p>
-                <div className="text-lg font-bold text-piutang">{formatRupiah(selectedMenu.price)}</div>
+
+             {/* Image — compact height */}
+             <div className="w-full h-40 sm:h-44 relative bg-gray-100 shrink-0">
+               <img src={selectedMenu.image || 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop'} className="w-full h-full object-cover object-center" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
              </div>
 
-             {/* Dynamic Option Selection */}
-             {selectedMenu && getParsedOptions(selectedMenu).length > 0 && (
-                <div className="px-6 py-4 border-b border-gray-100">
-                  <h3 className="text-sm font-bold text-text-main mb-3 uppercase tracking-widest">Pilih Opsi</h3>
-                  <div className="grid grid-cols-3 gap-3">
-                     {getParsedOptions(selectedMenu).map(opt => {
-                        const priceAdd = parseInt(opt.priceModifier) || 0;
-                        const stock = parseInt(opt.stock) || 0;
-                        const isOut = stock <= 0;
-                        return (
-                          <button 
-                            key={opt.name}
-                            onClick={() => !isOut && setModalSize(opt.name)}
-                            disabled={isOut}
-                            className={`border rounded-2xl p-3 flex flex-col items-center justify-center transition-all relative overflow-hidden ${
-                              isOut 
-                                ? 'border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed' 
-                                : modalSize === opt.name 
-                                  ? 'border-piutang bg-piutang/5' 
-                                  : 'border-gray-200 bg-white hover:border-gray-300'
-                            }`}
-                          >
-                             <span className={`font-bold text-sm text-center ${modalSize === opt.name && !isOut ? 'text-piutang' : 'text-text-main'}`}>{opt.name}</span>
-                             {priceAdd > 0 && <span className="text-[10px] text-text-main/50 mt-1">+{formatRupiah(priceAdd)}</span>}
-                             {isOut ? (
-                               <span className="text-[9px] font-bold text-utang mt-1 bg-utang/10 px-2 py-0.5 rounded-sm">HABIS</span>
-                             ) : (
-                               <span className="text-[9px] text-text-main/40 mt-1">Stok: {stock}</span>
-                             )}
-                          </button>
-                        )
-                     })}
-                  </div>
-                </div>
-             )}
+             {/* Content */}
+             <div className="px-5 pt-4 pb-5 flex flex-col gap-3">
 
-             <div className="px-6 py-4">
-                <h3 className="text-sm font-bold text-text-main mb-3 uppercase tracking-widest">Catatan Spesial</h3>
-                <textarea 
-                  value={modalNote}
-                  onChange={e => setModalNote(e.target.value)}
-                  placeholder="Contoh: Less ice, extra gula, jangan pedas..."
-                  className="w-full border border-gray-200 bg-gray-50 rounded-2xl p-4 text-sm focus:outline-none focus:ring-2 focus:ring-piutang/50 focus:bg-white transition-all"
-                  rows="3"
-                ></textarea>
-             </div>
-
-             <div className="px-6 mt-4 flex items-center gap-4">
-               <div className="flex items-center justify-between bg-surface border border-gray-200 rounded-2xl p-1 shadow-sm w-32 shrink-0">
-                  <button onClick={() => setModalQuantity(Math.max(1, modalQuantity - 1))} className="w-10 h-10 flex items-center justify-center text-text-main hover:bg-gray-200 rounded-xl active:scale-95 transition-all"><Minus className="w-5 h-5" /></button>
-                  <span className="font-bold text-lg">{modalQuantity}</span>
-                  <button 
-                    onClick={() => {
-                      const opts = getParsedOptions(selectedMenu);
-                      const currentOpt = opts.find(o => o.name === modalSize);
-                      const maxStock = currentOpt ? (parseInt(currentOpt.stock) || 0) : 999;
-                      if (modalQuantity < maxStock) {
-                        setModalQuantity(modalQuantity + 1);
-                      } else if (currentOpt) {
-                        showAlert(`Stok opsi "${currentOpt.name}" tersisa ${maxStock} saja.`, 'Stok Habis', 'warning');
-                      } else {
-                        setModalQuantity(modalQuantity + 1);
-                      }
-                    }} 
-                    className="w-10 h-10 flex items-center justify-center text-text-main hover:bg-gray-200 rounded-xl active:scale-95 transition-all"
-                  ><Plus className="w-5 h-5" /></button>
+               {/* Name + Price */}
+               <div className="flex items-start justify-between gap-2">
+                 <div>
+                   <h2 className="text-2xl font-black text-[#2B231D] leading-tight">{selectedMenu.name}</h2>
+                   <p className="text-xs text-text-main/55 mt-0.5 line-clamp-1">{selectedMenu.description}</p>
+                 </div>
+                 <div className="text-lg font-black text-piutang shrink-0 mt-0.5">{formatRupiah(selectedMenu.price)}</div>
                </div>
-               <button 
-                  onClick={addToCartFromModal} 
-                  disabled={(() => {
-                    const opts = getParsedOptions(selectedMenu);
-                    if (opts.length === 0) return false; // no options, rely on menu isAvailable
-                    const currentOpt = opts.find(o => o.name === modalSize);
-                    return currentOpt ? (parseInt(currentOpt.stock) || 0) <= 0 : false;
-                  })()}
-                  className={`flex-1 text-white font-bold rounded-2xl py-4 shadow-lg active:scale-95 transition-all text-center ${
-                    (() => {
-                      const opts = getParsedOptions(selectedMenu);
-                      if (opts.length > 0) {
-                        const currentOpt = opts.find(o => o.name === modalSize);
-                        if (currentOpt && (parseInt(currentOpt.stock) || 0) <= 0) {
-                          return 'bg-gray-400 cursor-not-allowed shadow-none';
-                        }
-                      }
-                      return 'bg-piutang shadow-piutang/30 hover:bg-piutang/90';
-                    })()
-                  }`}
-               >
-                  Tambah ke Pesanan • {formatRupiah((selectedMenu.price + (getParsedOptions(selectedMenu).find(o => o.name === modalSize) ? (parseInt(getParsedOptions(selectedMenu).find(o => o.name === modalSize).priceModifier) || 0) : 0)) * modalQuantity)}
-               </button>
+
+               {/* Variants */}
+               {getParsedOptions(selectedMenu).length > 0 && (
+                 <div>
+                   <p className="text-[10px] font-bold text-text-main/40 uppercase tracking-widest mb-2">Pilih Varian</p>
+                   <div className="flex flex-wrap gap-2">
+                     {getParsedOptions(selectedMenu).map(opt => {
+                       const priceAdd = parseInt(opt.priceModifier) || 0;
+                       const stock = parseInt(opt.stock) || 0;
+                       const isOut = stock <= 0;
+                       const isSelected = modalSize === opt.name;
+                       return (
+                         <button
+                           key={opt.name}
+                           onClick={() => !isOut && setModalSize(opt.name)}
+                           disabled={isOut}
+                           className={`px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all flex flex-col items-center ${
+                             isOut
+                               ? 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed'
+                               : isSelected
+                                 ? 'border-piutang bg-piutang text-white shadow-sm'
+                                 : 'border-gray-200 bg-white text-text-main hover:border-piutang/50'
+                           }`}
+                         >
+                           <span>{opt.name}</span>
+                           {priceAdd > 0 && <span className={`text-[9px] mt-0.5 ${isSelected ? 'text-white/80' : 'text-text-main/40'}`}>+{formatRupiah(priceAdd)}</span>}
+                           {isOut && <span className="text-[9px] text-utang mt-0.5">Habis</span>}
+                         </button>
+                       );
+                     })}
+                   </div>
+                 </div>
+               )}
+
+               {/* Catatan */}
+               <div>
+                 <p className="text-[10px] font-bold text-text-main/40 uppercase tracking-widest mb-1.5">Catatan Spesial</p>
+                 <textarea
+                   value={modalNote}
+                   onChange={e => setModalNote(e.target.value)}
+                   placeholder="Contoh: Less ice, extra gula, jangan pedas..."
+                   className="w-full border border-gray-200 bg-gray-50 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-piutang/40 focus:bg-white transition-all resize-none"
+                   rows="2"
+                 />
+               </div>
+
+               {/* Quantity + Add Button */}
+               <div className="flex items-center gap-3 pt-1">
+                 <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-1 shrink-0">
+                   <button onClick={() => setModalQuantity(Math.max(1, modalQuantity - 1))} className="w-8 h-8 flex items-center justify-center text-text-main hover:bg-white rounded-lg active:scale-95 transition-all">
+                     <Minus className="w-4 h-4" />
+                   </button>
+                   <span className="font-bold text-base w-6 text-center">{modalQuantity}</span>
+                   <button
+                     onClick={() => {
+                       const opts = getParsedOptions(selectedMenu);
+                       const currentOpt = opts.find(o => o.name === modalSize);
+                       const maxStock = currentOpt ? (parseInt(currentOpt.stock) || 0) : (selectedMenu.stock ?? 999);
+                       if (modalQuantity < maxStock) {
+                         setModalQuantity(modalQuantity + 1);
+                       } else {
+                         showAlert(`Stok hanya tersisa ${maxStock}.`, 'Stok Habis', 'warning');
+                       }
+                     }}
+                     className="w-8 h-8 flex items-center justify-center text-text-main hover:bg-white rounded-lg active:scale-95 transition-all"
+                   >
+                     <Plus className="w-4 h-4" />
+                   </button>
+                 </div>
+                 <button
+                   onClick={addToCartFromModal}
+                   disabled={(() => {
+                     const opts = getParsedOptions(selectedMenu);
+                     if (opts.length === 0) return false;
+                     const currentOpt = opts.find(o => o.name === modalSize);
+                     return currentOpt ? (parseInt(currentOpt.stock) || 0) <= 0 : false;
+                   })()}
+                   className={`flex-1 text-white font-bold rounded-xl py-3 shadow-lg active:scale-95 transition-all text-sm text-center ${
+                     (() => {
+                       const opts = getParsedOptions(selectedMenu);
+                       if (opts.length > 0) {
+                         const currentOpt = opts.find(o => o.name === modalSize);
+                         if (currentOpt && (parseInt(currentOpt.stock) || 0) <= 0) return 'bg-gray-300 cursor-not-allowed shadow-none';
+                       }
+                       return 'bg-piutang hover:bg-piutang/90';
+                     })()
+                   }`}
+                 >
+                   Tambah ke Pesanan • {formatRupiah((selectedMenu.price + (getParsedOptions(selectedMenu).find(o => o.name === modalSize) ? (parseInt(getParsedOptions(selectedMenu).find(o => o.name === modalSize).priceModifier) || 0) : 0)) * modalQuantity)}
+                 </button>
+               </div>
+
              </div>
            </div>
          </div>
       )}
+
 
       {/* Cart / Confirmation Modal */}
       {isCartOpen && (
