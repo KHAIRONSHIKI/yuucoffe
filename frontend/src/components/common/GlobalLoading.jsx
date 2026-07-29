@@ -15,7 +15,7 @@ const GlobalLoading = () => {
           <Coffee className="w-12 h-12 text-[#1A1F16]" />
         </div>
       </div>
-      <h2 className="text-3xl font-black text-text-main tracking-widest mb-2 animate-pulse">YU_COFFE</h2>
+      <h2 className="text-3xl font-black text-text-main tracking-widest mb-2 animate-pulse">YUUCOFFE</h2>
       <div className="flex items-center gap-2 text-[#1A1F16] font-bold">
         <Loader2 className="w-5 h-5 animate-spin" />
         {loadingState.message}
